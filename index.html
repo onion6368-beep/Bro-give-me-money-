@@ -86,75 +86,121 @@
         .btn-no:hover {
             background-color: #e84118;
         }
-        #success-message {
+        .card-display {
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: left;
+            border-left: 4px solid #ff4757;
+        }
+        .card-display p {
+            margin: 5px 0;
+            color: #333;
+        }
+        #link-box {
+            margin-top: 15px;
+            word-break: break-all;
+            background: #eee;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 12px;
             display: none;
-            margin-top: 20px;
-            color: #2ed573;
-            font-weight: bold;
-            font-size: 18px;
+            color: #333;
         }
     </style>
 </head>
 <body>
 
-    <div class="container" id="main-card">
-        <h2>Bro, I Need Money 🥺</h2>
-        <p>Please review my emergency request and fund my lifestyle immediately.</p>
-        
-        <form id="beg-form" onsubmit="handleSubmit(event)">
+    <div class="container" id="app-container">
+        <!-- Creator View (You see this first) -->
+        <div id="creator-view">
+            <h2>Create Your Request 💸</h2>
+            <p>Type how much you need and why, then generate a link for your brother.</p>
+            
             <div class="form-group">
-                <label for="amount">Amount Needed (₹ / $):</label>
-                <input type="number" id="amount" placeholder="e.g., 5000" required>
+                <label for="input-amount">Amount Needed:</label>
+                <input type="text" id="input-amount" placeholder="e.g., ₹5000 or $50">
             </div>
             
             <div class="form-group">
-                <label for="reason">Reason for Request:</label>
-                <textarea id="reason" placeholder="e.g., Bro I am broke, need food/games/survival..." required></textarea>
+                <label for="input-reason">Reason:</label>
+                <textarea id="input-reason" placeholder="e.g., Bro I am broke, need food/games..."></textarea>
+            </div>
+
+            <button type="button" class="btn-pay" onclick="generateLink()" style="width: 100%;">Generate Shareable Link 🔗</button>
+            <div id="link-box"></div>
+        </div>
+
+        <!-- Brother View (He sees this when he opens the link) -->
+        <div id="brother-view" style="display: none;">
+            <h2>Bro, I Need Money 🥺</h2>
+            <p>Your brother has filed an emergency financial request. Please fund immediately.</p>
+            
+            <div class="card-display">
+                <p><strong>Requested Amount:</strong> <span id="display-amount"></span></p>
+                <p><strong>Reason:</strong> <span id="display-reason"></span></p>
             </div>
 
             <div class="btn-container">
-                <button type="submit" class="btn-pay">Send Money 💸</button>
+                <button type="button" class="btn-pay" onclick="handlePay()">Send Money 💸</button>
                 <button type="button" class="btn-no" id="no-btn" onclick="handleNoClick()">No ❌</button>
             </div>
-        </form>
+        </div>
 
-        <div id="success-message">
-            🎉 Request sent! Please check your UPI app or wallet immediately. Your brother thanks you for your generosity.
+        <!-- Success Message -->
+        <div id="success-message" style="display: none;">
+            <h2>Thank You! 🎉</h2>
+            <p style="color: #2ed573; font-weight: bold;">Request approved! Your brother appreciates your financial sacrifice.</p>
         </div>
     </div>
 
     <script>
+        // Check if the URL already has amount and reason attached
+        const urlParams = new URLSearchParams(window.location.search);
+        const encodedAmount = urlParams.get('amount');
+        const encodedReason = urlParams.get('reason');
+
+        if (encodedAmount && encodedReason) {
+            // If opened via link, show the brother view with the custom details
+            document.getElementById('creator-view').style.display = 'none';
+            document.getElementById('brother-view').style.display = 'block';
+            document.getElementById('display-amount').innerText = decodeURIComponent(encodedAmount);
+            document.getElementById('display-reason').innerText = decodeURIComponent(encodedReason);
+        }
+
+        function generateLink() {
+            const amount = document.getElementById('input-amount').value;
+            const reason = document.getElementById('input-reason').value;
+
+            if (!amount || !reason) {
+                alert('Please fill in both the amount and the reason!');
+                return;
+            }
+
+            const baseUrl = window.location.href.split('?')[0];
+            const generatedLink = `${baseUrl}?amount=${encodeURIComponent(amount)}&reason=${encodeURIComponent(reason)}`;
+
+            const linkBox = document.getElementById('link-box');
+            linkBox.style.display = 'block';
+            linkBox.innerHTML = `<strong>Copy this link and send it to your brother:</strong><br><a href="${generatedLink}" target="_blank">${generatedLink}</a>`;
+        }
+
         let noClickCount = 0;
-        const refusalMessages = [
-            "No ❌",
-            "Are you sure?",
-            "Think again, bro!",
-            "Don't be heartless!",
-            "Wrong button!",
-            "Try the green one instead 😭"
-        ];
+        const refusalMessages = ["No ❌", "Are you sure?", "Think again, bro!", "Don't be heartless!", "Wrong button!"];
 
         function handleNoClick() {
             noClickCount++;
             const noBtn = document.getElementById('no-btn');
-            
             if (noClickCount < refusalMessages.length) {
                 noBtn.innerText = refusalMessages[noClickCount];
             } else {
-                // Make the "No" button run away or disappear after multiple rejections
                 noBtn.style.transform = `translate(${Math.random() * 100 - 50}px, ${Math.random() * 100 - 50}px)`;
             }
         }
 
-        function handleSubmit(event) {
-            event.preventDefault();
-            const amount = document.getElementById('amount').value;
-            const reason = document.getElementById('reason').value;
-
-            // You can customize what happens here (e.g., connect to backend, send to webhook, etc.)
-            console.log(`Amount requested: ${amount}, Reason: ${reason}`);
-
-            document.getElementById('beg-form').style.display = 'none';
+        function handlePay() {
+            document.getElementById('brother-view').style.display = 'none';
             document.getElementById('success-message').style.display = 'block';
         }
     </script>
