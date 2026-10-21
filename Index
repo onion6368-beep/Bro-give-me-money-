@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Urgent Financial Assistance Required</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e1e2f, #2a2a40);
+            color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background: #ffffff;
+            color: #333333;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+        h2 {
+            margin-bottom: 10px;
+            color: #ff4757;
+        }
+        p {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+        textarea {
+            resize: vertical;
+            height: 80px;
+        }
+        .btn-container {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        button {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .btn-pay {
+            background-color: #2ed573;
+            color: white;
+        }
+        .btn-pay:hover {
+            background-color: #26af5f;
+        }
+        .btn-no {
+            background-color: #ff4757;
+            color: white;
+            position: relative;
+        }
+        .btn-no:hover {
+            background-color: #e84118;
+        }
+        #success-message {
+            display: none;
+            margin-top: 20px;
+            color: #2ed573;
+            font-weight: bold;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container" id="main-card">
+        <h2>Bro, I Need Money 🥺</h2>
+        <p>Please review my emergency request and fund my lifestyle immediately.</p>
+        
+        <form id="beg-form" onsubmit="handleSubmit(event)">
+            <div class="form-group">
+                <label for="amount">Amount Needed (₹ / $):</label>
+                <input type="number" id="amount" placeholder="e.g., 5000" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="reason">Reason for Request:</label>
+                <textarea id="reason" placeholder="e.g., Bro I am broke, need food/games/survival..." required></textarea>
+            </div>
+
+            <div class="btn-container">
+                <button type="submit" class="btn-pay">Send Money 💸</button>
+                <button type="button" class="btn-no" id="no-btn" onclick="handleNoClick()">No ❌</button>
+            </div>
+        </form>
+
+        <div id="success-message">
+            🎉 Request sent! Please check your UPI app or wallet immediately. Your brother thanks you for your generosity.
+        </div>
+    </div>
+
+    <script>
+        let noClickCount = 0;
+        const refusalMessages = [
+            "No ❌",
+            "Are you sure?",
+            "Think again, bro!",
+            "Don't be heartless!",
+            "Wrong button!",
+            "Try the green one instead 😭"
+        ];
+
+        function handleNoClick() {
+            noClickCount++;
+            const noBtn = document.getElementById('no-btn');
+            
+            if (noClickCount < refusalMessages.length) {
+                noBtn.innerText = refusalMessages[noClickCount];
+            } else {
+                // Make the "No" button run away or disappear after multiple rejections
+                noBtn.style.transform = `translate(${Math.random() * 100 - 50}px, ${Math.random() * 100 - 50}px)`;
+            }
+        }
+
+        function handleSubmit(event) {
+            event.preventDefault();
+            const amount = document.getElementById('amount').value;
+            const reason = document.getElementById('reason').value;
+
+            // You can customize what happens here (e.g., connect to backend, send to webhook, etc.)
+            console.log(`Amount requested: ${amount}, Reason: ${reason}`);
+
+            document.getElementById('beg-form').style.display = 'none';
+            document.getElementById('success-message').style.display = 'block';
+        }
+    </script>
+
+</body>
+</html>
